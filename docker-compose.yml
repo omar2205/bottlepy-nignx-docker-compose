@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./www:/var/www/html/:ro
+    networks:
+      - super_net
+
+  bottle_server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server/:/usr/src/app/:ro
+    expose:
+      - 8080
+    networks:
+      - super_net
+    depends_on:
+      - nginx
+
+networks:
+  super_net:
